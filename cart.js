@@ -52,12 +52,59 @@ function getCart($email) {
 function deleteItem($id) {
 
     //TODO complete implementation using the product id
-    alert("cart.js/deleteItem() is not implemented")
+    //alert("cart.js/deleteItem() is not implemented")
+
+    $.ajax({
+        url: Url+'Cart/'+$id,
+        type: 'delete',
+
+        success: function (data) { //on success
+            //sends an alert that the item has successfully been deleted
+            alert("Item deleted.");
+            window.location.href = './cart.html'; //refresh the shopping cart page
+        },
+        error: function (data) { //on error, throw an alert
+            alert("Error while fetching data.");
+        }
+    })
 }
 
 function checkOut() {
-
     //TODO complete implementation
-    alert("cart.js/checkOut() is not implemented")
+    //alert("cart.js/checkOut() is not implemented")
+    
+    $.ajax({
+        url: Url+'Cart',
+            type: 'put',
+            dataType: 'json',
+            data: {"email": email},
+            contentType: 'text/plain',
 
+        success: function (data) { //on success
+            
+            //delete items from the cart
+            $.ajax({
+                url: Url + 'GetCart',
+                type: 'get',
+                dataType: 'json',
+                data: {"email": email},
+                contentType: 'text/plain',
+                success: function (data) {
+                    
+                    $.each(data['data']['List'], function(i, item){ //for each item
+                        deleteItem(item['id']); //delete the item using the product_id
+                    });
+                    
+                    //sends an alert that the item has successfully been deleted
+                    alert("Checkout successful.");
+                },
+                error: function (data) {
+                    alert("Error while deleting checked-out items from the cart.");
+                }
+            });
+        },
+        error: function (data) { //on error, throw an alert
+            alert("Error while checking out.");
+        }
+    })
 }

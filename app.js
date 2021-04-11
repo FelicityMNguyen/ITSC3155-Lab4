@@ -163,9 +163,27 @@ function fetchComments($id) {
 }
 
 function setComment($id) {
+    let comment =$.trim($('#message-text').val()); //gets the user's comment text
+    let score =$('#score').val(); //gets the user's score
 
     //TODO complete implementation using the product id
-    alert("app.js/setComment() not implemented")
+    //alert("app.js/setComment() not implemented")
+    $.ajax({
+        url: Url+'SetComment',
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({"product_id":$id, "comment": comment, "score": score}),
+        contentType: 'text/plain',
+
+        success: function (data) { //on success
+            //sends an alert that the comment has successfully been submitted
+            alert("Comment submitted");
+        },
+        error: function (data) { //on error, throw an alert
+            alert("Error while fetching data.");
+        }
+    })
+
 
     //HINT
     //Take note of how the Ajax call in app.js/fetchComments() posts a GET request to corresponding API endpoint.
@@ -174,11 +192,33 @@ function setComment($id) {
 }
 
 function addToCart($id) {
-
+    let email =$.trim($('#email').val()); //gets the user's email
     //TODO complete implementation using the product id
-    alert("app.js/addToCart() not implemented")
+    //alert("app.js/addToCart() not implemented")
 
-
+    //email validation
+    
+    if( email !='' ) {
+        sessionStorage.setItem('email', email); //setItem 'email' in sessionStorage to be the user's email. You can access sessionStorage by sessionStorage.getItem().
+        $.ajax({
+            url: Url+'AddToCart',
+            type: 'post',
+            dataType: 'json',
+            data: JSON.stringify({"product_id":$id, "email": email}),
+            contentType: 'text/plain',
+    
+            success: function (data) { //on success
+                //sends an alert that the comment has successfully been submitted
+                alert("Item added to your cart.");
+                window.location.href = './cart.html'; //redirects to the shopping cart page
+            },
+            error: function (data) { //on error, throw an alert
+                alert("Error while posting data to your cart.");
+            }
+        })
+    } else {
+        alert("Please enter your email at the top of the page."); //alert user since email is empty
+    }
 }
 
 function toShoppingCart(){
