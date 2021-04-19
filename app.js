@@ -7,6 +7,11 @@ function fetchProductList() {
     var productList;
     var productListAdd;
 
+
+    price_sort =$('#price-sort').val();
+    var sorted_items = [];
+
+
     !($.trim($('#title').val()) == '') ? item ["title"] = $('#title').val(): '';
     !($.trim($('#operating_system').val()) == '') ? item ["operating_system"] = $('#operating_system').val(): '';
     !($.trim($('#min_price').val()) == '') ? item ["price_from"] = $('#min_price').val(): '';
@@ -25,7 +30,22 @@ function fetchProductList() {
         success: function (data) { //on success calls this functions and passes the API response as the data parameter.
             productList='';
 
-            $.each(data['data']['List'], function(i, item) {
+            sorted_items = data['data']['List'];
+            if (price_sort == "ascending") {
+                sorted_items.sort(function(a, b){
+                    var sortie = a.money_price - b.money_price;
+
+                    return sortie;
+                });                
+            } else {
+                sorted_items.sort(function(a, b){
+                    var sortie = b.money_price - a.money_price;
+                    
+                    return sortie;
+                });        
+            }
+
+            $.each(sorted_items, function(i, item) {
 
                 //this is HTML code that is reactively added to the page, your TODO solutions do not need this.
                 productListAdd = '<div class="col-sm-6 col-md-4 col-lg-3 mt-4" id="product'+item['id']+'">\n' +
