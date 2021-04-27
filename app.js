@@ -105,9 +105,18 @@ function fetchOneProduct($id) {
                 '                    </div>\n' +
                 '                    <div class="details col-md-6">\n' +
                 '                        <h3 class="product-title" style="margin-top: 10px">'+data['data']['List'][0]['title'].substring(0,15)+'...'+'</h3>\n' +
-                '                        <div class="rating">\n' +
-                '                            <button class="btn btn-info" id="comment" onclick="fetchComments('+data['data']['List'][0]['id']+')">'+data['data']['List'][0]['comment_count']+' comments</button>\n' +
-                '                        </div>\n' +
+                '                           <div class="col-auto">\n' +
+                '                               <div class="col rating">\n' +
+                '                                <button class="btn btn-info" id="comment" onclick="fetchComments('+data['data']['List'][0]['id']+')">'+data['data']['List'][0]['comment_count']+' comments</button>\n' +
+                '                               </div>\n' +
+                '                               <div class="col">\n' +
+                '                                   <label for="score-sort">Sort by score:</label>\n' +
+                '                                   <select name="score-sort" id="score-sort">\n' +
+                '                                       <option value="ascending">Ascending</option>\n' +
+                '                                       <option value="descending">Descending</option>\n' +
+                '                                   </select>\n' +
+                '                               </div>\n' +
+                '                           </div>\n' +
                 '                        <p class="product-description">'+data['data']['List'][0]['title']+'</p>\n' +
                 '                        <h5 class="price">Current Price: <span>'+data['data']['List'][0]['price']+'</span></h5>\n' +
                 '                        <h6 class="price">Screen Size: <span>'+data['data']['List'][0]['screen_size']+'</span></h6>\n' +
@@ -135,6 +144,9 @@ function fetchComments($id) {
     var comment;
     var commentAdd;
 
+    score_sort =$('#score-sort').val();
+    var sorted_comments = [];
+
     $.ajax({
         url: Url+'GetProductComment',
         type: 'get',
@@ -153,6 +165,22 @@ function fetchComments($id) {
                 '            </div>\n' +
                 '            <div class="panel-body">\n' +
                 '                <ul class="list-group">\n';
+
+            sorted_comments = data['data']['List'];
+            if (score_sort == "ascending") {
+                sorted_comments.sort(function(a, b){
+                    var sortie = a.score - b.score;
+
+                    return sortie;
+                });                
+            } else {
+                sorted_comments.sort(function(a, b){
+                    var sortie = b.score - a.score;
+                    
+                    return sortie;
+                });        
+            }
+
             $.each(data['data']['List'], function(i, item) {
                 commentAdd ='                    <li class="list-group-item">\n' +
                     '                        <div class="row">\n' +
